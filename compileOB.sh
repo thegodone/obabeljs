@@ -8,4 +8,8 @@ cmake  \
 -DObabel_LIB_DIR=/Users/mbp/Github/build/src \
 -DEMSCRIPTEN_BIN=/Users/mbp/Github/emsdk_portable1/emscripten/tag-1.34.6
 
-make
+make -j7
+
+
+cat javascript/pre.js obabel.js javascript/post.js > dist/obabel.js
+

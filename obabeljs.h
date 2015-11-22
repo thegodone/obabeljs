@@ -12,24 +12,20 @@ using namespace emscripten;
 using namespace OpenBabel;
 using namespace std;
 
-class Molecule
+class Mol
 {
 public:
-    Molecule(OBMol *obmol);
-    
-    ~Molecule();
+    Mol(OBMol obmol);
+    ~Mol();
 
-    static Molecule* fromSmiles(string smiles);
-
-
+    static Mol* fromSmiles(string smiles);
 
     // return the canonicalindex of the atoms
     std::vector<unsigned int> canonicalindex();
     std::vector<unsigned int> Mol_NMR_FP();
     std::vector<unsigned int> Atom_NMR_FP();
     std::vector<unsigned int> BFS();
-    void getRingcode(OBAtom *root, OBMol mol);
-
+    //void getRingcode(OBAtom *root);
 
 private:
     OBMol* obmol;
@@ -38,7 +34,7 @@ private:
 };
 
 
-Molecule* passThrough(Molecule* ptr) { return ptr; }
+Mol* passThrough(Mol* ptr) { return ptr; }
 
 // Binding code
 EMSCRIPTEN_BINDINGS(obmol) {
@@ -46,13 +42,13 @@ EMSCRIPTEN_BINDINGS(obmol) {
     register_vector<string>("VectorString");
     register_vector<unsigned int>("VectorUint");
 
-    class_<Molecule>("Molecule")
-    .function("canonicalindex",&Molecule::canonicalindex, allow_raw_pointers())
-    .function("Mol_NMR_FP",&Molecule::Mol_NMR_FP, allow_raw_pointers())
-    .function("Atom_NMR_FP",&Molecule::Atom_NMR_FP, allow_raw_pointers())
-    .function("BFS",&Molecule::BFS, allow_raw_pointers())
-    .function("getRingcode",&Molecule::getRingcode, allow_raw_pointers())
-    .class_function("fromSmiles", &Molecule::fromSmiles, allow_raw_pointers());
+    class_<Mol>("Mol")
+    .function("canonicalindex",&Mol::canonicalindex, allow_raw_pointers())
+    .function("Mol_NMR_FP",&Mol::Mol_NMR_FP, allow_raw_pointers())
+    .function("Atom_NMR_FP",&Mol::Atom_NMR_FP, allow_raw_pointers())
+    .function("BFS",&Mol::BFS, allow_raw_pointers())
+    //.function("getRingcode",&Mol::getRingcode, allow_raw_pointers())
+    .class_function("fromSmiles", &Mol::fromSmiles, allow_raw_pointers());
     
    
 }

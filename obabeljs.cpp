@@ -9,34 +9,51 @@
 using namespace OpenBabel;
 using namespace std;
     
-Molecule::Molecule(OBMol* mol): obmol(mol) {}
-/**
+//Mol::Mol(OBMol* mol): obmol(mol) {printf("obmol creator\n");}
+
+Mol::Mol(OBMol obmol) {
+
+}
+/*
  * @brief [delete]
  * @details [action on rdmol during delete process]
  * @return [description]
  */
-Molecule::~Molecule() {
+
+Mol::~Mol() {
   if(obmol != 0) {
-    //printf("Destroy called\n");
+    printf("Destroy called\n");
     delete obmol;
     obmol =0;
   }
 }
 
-Molecule* Molecule::fromSmiles(string smiles) {
-   
+
+Mol *Mol::fromSmiles(string smiles) {
+          OBConversion obconversion;
+          obconversion.SetInFormat("smi");
+          obconversion.SetOutFormat("smi");
+
           OBMol obmol;
-          OBConversion conv;
-          conv.SetInFormat("smi");
-          conv.SetOutFormat("smi"); // for canonical use can output format!
-          bool ok = conv.ReadString(&obmol, smiles); // not sure it will work!
-          return new Molecule(&obmol);
+
+          bool notatend = obconversion.ReadString(&obmol,smiles);
+  
+          std::cout << "Molecular Weight: " << obmol.GetMolWt() << std::endl;
+
+          std::string out = obconversion.WriteString(&obmol);
+          
+          std::cout << out.c_str() << std::endl;
+
+          return new Mol(obmol);
 }
 
 // return the canonicalindex of the atoms
-std::vector<unsigned int> Molecule::canonicalindex()
+std::vector<unsigned int> Mol::canonicalindex()
 {
+  std::cout << "Molecular Weight in canonicalindex function: " << obmol->GetMolWt() << std::endl;
 
+
+  std::cout << "converted:";
   OBGraphSym gs = OBGraphSym(obmol);
   std::vector<unsigned int> symclasses;
   gs.GetSymmetry(symclasses);
@@ -48,7 +65,7 @@ std::vector<unsigned int> Molecule::canonicalindex()
 }
 
 
-std::vector<unsigned int> Molecule::Mol_NMR_FP()
+std::vector<unsigned int> Mol::Mol_NMR_FP()
 {
           OBSmartsPattern sp;
 
@@ -73,7 +90,7 @@ std::vector<unsigned int> Molecule::Mol_NMR_FP()
 
 
 
-std::vector<unsigned int> Molecule::Atom_NMR_FP()
+std::vector<unsigned int> Mol::Atom_NMR_FP()
 {
           OBSmartsPattern sp;
           std::string array[] = {"[CX4H0]","[CX4H1]","[CX4H2]","[CX4H3]","[$([CX3H0]=*)]","[$([CX3H2]=*),$([CX3H1]=*)]",
@@ -109,7 +126,7 @@ std::vector<unsigned int> Molecule::Atom_NMR_FP()
 
 
 
-std::vector<unsigned int> Molecule::BFS()
+std::vector<unsigned int> Mol::BFS()
 {
         OBElementTable etab;
 
@@ -163,8 +180,8 @@ std::vector<unsigned int> Molecule::BFS()
 
 }
 
-
-void Molecule::getRingcode(OBAtom *root, OBMol mol)
+/*
+void Mol::getRingcode(OBAtom *root)
         {
           int count;
           char buffer[10000];
@@ -172,7 +189,7 @@ void Molecule::getRingcode(OBAtom *root, OBMol mol)
           OBAtom *atom;
           vector<OBRing*> vr;
 
-          vr = mol.GetSSSR(); 
+          vr = obmol->GetSSSR(); 
           vector<OBNodeBase*>::iterator i;
 
           vector<OBRing*>::iterator k;
@@ -191,7 +208,7 @@ void Molecule::getRingcode(OBAtom *root, OBMol mol)
         return;
 
 }
-
+*/
 
 
 
